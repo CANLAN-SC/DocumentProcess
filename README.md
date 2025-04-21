@@ -29,7 +29,7 @@
 ┌── 2word.py                      # 转word脚本
 ├── mergeWord.py                  # 合并word脚本
 └── 待处理文件夹/                  # 改成你自己的文件夹名字
-	├── *.pdf / *.jpg / *.png
+    ├── *.pdf / *.jpg / *.png
     └── 待处理文件夹docx/          # 自动生成的 Word 文件存放目录
     |   └── *.docx                # 每个 PDF 对应一个 Word 文件
     └── 待处理文件夹_合并.docx     # 合并生成的总 Word 文档
