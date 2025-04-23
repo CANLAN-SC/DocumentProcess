@@ -26,7 +26,8 @@
 
 ```
 项目目录/
-┌── 2word.py                      # 转word脚本
+┌── 2word.py                      # 转word脚本,图片清晰但文件比较大
+├── 2word_compress.py             # 转word脚本,并且压缩文件大小
 ├── mergeWord.py                  # 合并word脚本
 └── 待处理文件夹/                  # 改成你自己的文件夹名字
     ├── *.pdf / *.jpg / *.png
