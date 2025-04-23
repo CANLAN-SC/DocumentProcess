@@ -29,6 +29,13 @@ def resize_image(pil_img):
 
     return pil_img.resize((new_width_px, new_height_px), Image.LANCZOS)
 
+def compress_image(pil_img, quality=85):
+    buffer = io.BytesIO()
+    pil_img.save(buffer, format='JPEG', quality=quality, optimize=True)
+    buffer.seek(0)
+    return buffer
+
+
 # 处理文件
 for file in os.listdir(input_folder):
     file_path = os.path.join(input_folder, file)
@@ -39,14 +46,11 @@ for file in os.listdir(input_folder):
     if file_lower.endswith('.pdf'):
         pages = convert_from_path(file_path, dpi=200, poppler_path=poppler_path)
 
-        #pages = convert_from_path(file_path, dpi=200)
-
         page_added = False
         for page in pages:
             pil_img = resize_image(page)
 
-            img_byte_arr = io.BytesIO()
-            pil_img.save(img_byte_arr, format='PNG')
+            img_byte_arr = compress_image(pil_img, quality=80)
             img_byte_arr.seek(0)
 
             if page_added:
