@@ -1,4 +1,5 @@
 # 📄 PDF 批量转换为 Word（含图片）工具
+Windows用户已经打包成exe软件发布，Linux用户需要安装poppler-utils。
 
 这是一个 **自动将多个 PDF 或图片文件转换为 Word 文件（.docx）并合并输出** 的小工具。
 
@@ -26,9 +27,9 @@
 
 ```
 项目目录/
-┌── 2word.py                      # 转word脚本,图片清晰但文件比较大
-├── 2word_compress.py             # 转word脚本,并且压缩文件大小
-├── mergeWord.py                  # 合并word脚本
+┌── PDF_Converter_GUI.py          # 主程序，Windows 环境下只需要运行这一个文件
+├── 2word.py                      # Linux 环境下运行:转换 PDF / 图片 为 Word 文件
+├── 2word_compress.py             # Linux 环境下运行:转换 PDF / 图片 为 Word 文件（压缩版）
 └── 待处理文件夹/                  # 改成你自己的文件夹名字
     ├── *.pdf / *.jpg / *.png
     └── 待处理文件夹docx/          # 自动生成的 Word 文件存放目录
@@ -56,7 +57,7 @@ pip install docxcompose
 ```bash
 sudo apt-get install poppler-utils
 ```
-并且注释`2word.py` 的 `poppler_path` 变量，以及将`pages = convert_from_path(file_path, dpi=200, poppler_path=poppler_path)`中的`, poppler_path=poppler_path`删除。
+并且注释`2word.py`和`2word_compress.py`的 `poppler_path` 变量，以及将`pages = convert_from_path(file_path, dpi=200, poppler_path=poppler_path)`中的`, poppler_path=poppler_path`删除。
 
 ---
 
@@ -64,21 +65,21 @@ sudo apt-get install poppler-utils
 
 ### 第一步：准备
 
-1. 将所有 PDF 和图片文件放入一个文件夹，例如 `专利/`
-2. 修改脚本中 `input_folder = '专利'`
+1. 将所有 PDF 和图片文件放入一个文件夹，例如 `待处理文件/`
+2. 修改脚本中 `input_folder = '待处理文件'`
 
 ### 第二步：转换
 
 运行 `2word.py`，将 PDF / 图片 转换为多个 Word 文件：
 
 
-生成的 Word 文件保存在 `专利/专利_docx/` 目录中。
+生成的 Word 文件保存在 `待处理文件/待处理文件_docx/` 目录中。
 
 ### 第三步：合并 Word 文件
 
 运行 `mergeWord.py`，合并所有 Word 文件为一个大文件：
 
-最终合并结果为： `专利/专利_合并.docx`
+最终合并结果为： `待处理文件/待处理文件_合并.docx`
 
 ------
 
