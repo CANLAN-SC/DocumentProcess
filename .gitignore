@@ -2,3 +2,4 @@
 poppler/
 build/
 installer.iss
+setup.py
