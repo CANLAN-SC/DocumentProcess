@@ -1,12 +1,18 @@
 import os
+import sys
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, Pt
+from docx.oxml.ns import qn
 from PIL import Image
 import io
 from pdf2image import convert_from_path
 
 # 配置路径
-input_folder = '专利'  # 待处理文件夹路径
+# 获取传入的文件夹路径
+if len(sys.argv) > 1:
+    input_folder = sys.argv[1]
+else:
+    input_folder = '待处理文件'  # 默认
 output_folder = os.path.join(input_folder, input_folder + '_' + 'docx')
 os.makedirs(output_folder, exist_ok=True)
 
@@ -15,6 +21,15 @@ poppler_path = r"poppler\Library\bin"  # 你的poppler路径，Windows用户不�
 # 最大宽高 (A4页面约为6x9英寸，缩小90%)
 MAX_WIDTH_INCH = 6.0 * 0.9
 MAX_HEIGHT_INCH = 9.0 * 0.9
+
+# 设置字体
+def set_font(document, font_name='微软雅黑', font_size=12):
+    style = document.styles['Normal']
+    font = style.font
+    font.name = font_name
+    font.size = Pt(font_size)
+    # 中文字体（非常关键）
+    style.element.rPr.rFonts.set(qn('w:eastAsia'), font_name)
 
 # 缩放图片90%
 def resize_image(pil_img):
@@ -36,10 +51,11 @@ for file in os.listdir(input_folder):
     
     word_doc = Document()
 
+    # 设置全局字体（新加的）
+    set_font(word_doc, font_name='微软雅黑', font_size=12)
+
     if file_lower.endswith('.pdf'):
         pages = convert_from_path(file_path, dpi=200, poppler_path=poppler_path)
-
-        #pages = convert_from_path(file_path, dpi=200)
 
         page_added = False
         for page in pages:
@@ -52,7 +68,13 @@ for file in os.listdir(input_folder):
             if page_added:
                 word_doc.add_page_break()
 
-            word_doc.add_paragraph(os.path.splitext(file)[0], style='Heading 1')
+            # 添加标题
+            heading = word_doc.add_paragraph(os.path.splitext(file)[0], style='Heading 1')
+            # 设置标题中文字体
+            run = heading.runs[0]
+            run.font.name = '微软雅黑'
+            run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+
             word_doc.add_picture(img_byte_arr, width=Inches(MAX_WIDTH_INCH))
             page_added = True
 
@@ -71,7 +93,11 @@ for file in os.listdir(input_folder):
         pil_img.save(img_byte_arr, format='PNG')
         img_byte_arr.seek(0)
 
-        word_doc.add_paragraph(os.path.splitext(file)[0], style='Heading 1')
+        heading = word_doc.add_paragraph(os.path.splitext(file)[0], style='Heading 1')
+        run = heading.runs[0]
+        run.font.name = '微软雅黑'
+        run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+
         word_doc.add_picture(img_byte_arr, width=Inches(MAX_WIDTH_INCH))
 
         word_file_path = os.path.join(output_folder, os.path.splitext(file)[0] + '.docx')
