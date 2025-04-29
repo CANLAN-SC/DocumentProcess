@@ -10,7 +10,7 @@ from PIL import Image
 import io
 from pdf2image import convert_from_path
 from docxcompose.composer import Composer
-from docx.shared import RGBColor  # 确保你在文件开头导入了这一行
+from docx.shared import RGBColor  
 
 class PDFConverterApp:
     def __init__(self, root):
@@ -50,7 +50,6 @@ class PDFConverterApp:
         self.log_text.grid(row=5, column=0, columnspan=3, padx=10, pady=10)
 
         # 全局配置
-        #self.poppler_path = r"poppler\Library\bin"  # Windows路径
         self.MAX_WIDTH_INCH = 6.0 * 0.9
         self.MAX_HEIGHT_INCH = 9.0 * 0.9
 

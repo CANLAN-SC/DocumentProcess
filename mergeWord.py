@@ -4,11 +4,7 @@ from docx import Document
 from docxcompose.composer import Composer
 
 # 配置路径
-# 获取传入的文件夹路径
-if len(sys.argv) > 1:
-    input_folder = sys.argv[1]
-else:
-    input_folder = '待处理文件'  # 默认
+input_folder = '待处理文件'  # 默认，需要根据实际情况修改
 word_folder = os.path.join(input_folder, input_folder + '_docx')
 output_path = os.path.join(input_folder, os.path.basename(input_folder) + '_合并.docx')
 

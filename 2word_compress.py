@@ -6,13 +6,9 @@ from docx.oxml.ns import qn
 from PIL import Image
 import io
 from pdf2image import convert_from_path
-
+from docx.shared import RGBColor  
 # 配置路径
-# 获取传入的文件夹路径
-if len(sys.argv) > 1:
-    input_folder = sys.argv[1]
-else:
-    input_folder = '待处理文件'  # 默认
+input_folder = '待处理文件'  # 默认，需要根据实际情况修改
 
 output_folder = os.path.join(input_folder, input_folder + '_' + 'docx')
 os.makedirs(output_folder, exist_ok=True)
@@ -28,6 +24,7 @@ def set_font(document, font_name='微软雅黑', font_size=12):
     style = document.styles['Normal']
     font = style.font
     font.name = font_name
+    font.color.rgb = RGBColor(0, 0, 0)  # 设置字体颜色为黑色
     font.size = Pt(font_size)
     # 中文字体设置
     style.element.rPr.rFonts.set(qn('w:eastAsia'), font_name)
@@ -80,6 +77,7 @@ for file in os.listdir(input_folder):
             run = heading.runs[0]
             run.font.name = '微软雅黑'
             run.font.size = Pt(14)  # 标题14号字体
+            run.font.color.rgb = RGBColor(0, 0, 0)  # 添加这一行确保标题也是黑色
             run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
 
             word_doc.add_picture(img_byte_arr, width=Inches(MAX_WIDTH_INCH))
@@ -104,6 +102,7 @@ for file in os.listdir(input_folder):
         run = heading.runs[0]
         run.font.name = '微软雅黑'
         run.font.size = Pt(14)  # 标题14号字体
+        run.font.color.rgb = RGBColor(0, 0, 0)  # 添加这一行确保标题也是黑色
         run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
 
         word_doc.add_picture(img_byte_arr, width=Inches(MAX_WIDTH_INCH))
