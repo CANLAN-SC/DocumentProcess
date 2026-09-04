@@ -1,96 +1,74 @@
-# 📄 PDF 批量转换为 Word（含图片）工具
-Windows用户已经打包成exe软件发布，Linux用户需要安装poppler-utils。
+# PDF / 图片批量转 Word
 
-这是一个 **自动将多个 PDF 或图片文件转换为 Word 文件（.docx）并合并输出** 的小工具。
+一个本地 Web 工具：把 PDF 的每一页渲染为高清图片并插入 Word，也可以把 JPG、JPEG、PNG 图片直接插入 Word。
 
-📌 它能将 PDF 中的每一页变成高清图片插入 Word，同时也支持 PNG/JPG 图片直接插入 Word。所有生成的单个 Word 文件可自动合并成一个完整文档（保留图片）。
+新版已统一为浏览器操作界面，不再使用 Tkinter GUI；PDF 渲染改用 **PyMuPDF**，因此不再需要安装 Poppler，也不再依赖系统 `PATH`。
 
-适合以下场景：
+## 功能
 
-- 批量处理扫描件（PDF）或图片为 Word 文档格式
-- 汇总图片、扫描图表等内容形成报告
-- 不懂复杂排版，只需要“图文版” Word 汇总文件
+- 批量上传 PDF、JPG、JPEG、PNG
+- A4 Word 版式实时预览，可切换文件并查看 PDF 前 6 页
+- 批量调整全部图片大小（页面可用区域的 10%～100%）
+- 分别设置 Word 上、下、左、右页边距
+- 高清和压缩两种输出质量
+- 多文件分别导出为 ZIP，或合并为一个 Word 文档
+- 所有文件只在运行该程序的本机处理，临时结果 24 小时后自动清理
 
-------
+## 安装
 
-## ✨ 功能特点
-
-- 📂 自动处理指定文件夹下的所有 PDF / 图片（JPG、PNG）文件
-- 🖼 PDF 每页转为高清图片插入 Word，图片直接插入 Word
-- 📏 自动缩放图片，适配 A4 页面（不会超出页面）
-- 📄 每个文件生成一个对应的 Word 文件
-- 📚 可自动合并所有生成的 Word 文件，保留图片不丢失
-
-------
-
-## 📁 文件结构说明
-
-```
-项目目录/
-┌── PDF_Converter_GUI.py          # 主程序，Windows 环境下只需要运行这一个文件
-├── 2word.py                      # Linux 环境下运行:转换 PDF / 图片 为 Word 文件
-├── 2word_compress.py             # Linux 环境下运行:转换 PDF / 图片 为 Word 文件（压缩版）
-└── 待处理文件夹/                  # 改成你自己的文件夹名字
-    ├── *.pdf / *.jpg / *.png
-    └── 待处理文件夹docx/          # 自动生成的 Word 文件存放目录
-    |   └── *.docx                # 每个 PDF 对应一个 Word 文件
-    └── 待处理文件夹_合并.docx     # 合并生成的总 Word 文档
-```
-
-------
-
-## ✅ 环境要求
-建议使用VSCode或者Pycharm运行，并安装Python环境。
-确保终端运行安装以下 Python 库：
+建议使用 Python 3.10 或更高版本：
 
 ```bash
-pip install pdf2image
-
-pip install pymupdf python-docx pillow
-
-pip install docxcompose
+python -m pip install -r requirements.txt
 ```
 
-- Windows 用户需要解压缩`poppler.zip`压缩包
-- Linux 用户：
-终端运行
+## 启动 Web 界面
+
 ```bash
-sudo apt-get install poppler-utils
+python app.py
 ```
-并且注释`2word.py`和`2word_compress.py`的 `poppler_path` 变量，以及将`pages = convert_from_path(file_path, dpi=200, poppler_path=poppler_path)`中的`, poppler_path=poppler_path`删除。
 
----
+程序默认启动在：
 
-## 🛠 使用步骤（超简单！）
+```text
+http://127.0.0.1:8000
+```
 
-### 第一步：准备
+启动后会自动打开浏览器。服务器环境或不希望自动打开浏览器时：
 
-1. 将所有 PDF 和图片文件放入一个文件夹，例如 `待处理文件/`
-2. 修改脚本中 `input_folder = '待处理文件'`
+```bash
+python app.py --no-browser
+```
 
-### 第二步：转换
+旧入口 `python PDF_Converter_GUI.py` 仍可使用，但现在同样启动 Web 界面，不会再创建桌面 GUI。
 
-运行 `2word.py`，将 PDF / 图片 转换为多个 Word 文件：
+## 使用流程
 
+1. 拖放或选择一个或多个 PDF/图片文件。
+2. 在右侧查看 Word 页面预览。
+3. 调整图片比例、页边距、输出质量和合并选项。
+4. 点击“开始转换”，完成后直接下载 DOCX 或 ZIP。
 
-生成的 Word 文件保存在 `待处理文件/待处理文件_docx/` 目录中。
+## 项目结构
 
-### 第三步：合并 Word 文件
+```text
+app.py                         # 推荐启动入口
+PDF_Converter_GUI.py           # 兼容旧入口，转发到 Web 应用
+requirements.txt               # Python 依赖
+web/
+├── app.py                     # Flask 路由、上传和下载
+├── core/converter.py          # PyMuPDF 渲染与 Word 生成
+├── templates/index.html       # 统一 Web 页面
+└── static/
+    ├── css/app.css
+    └── js/app.js
+tests/test_pdf_converter.py    # 转换和 Web API 测试
+```
 
-运行 `mergeWord.py`，合并所有 Word 文件为一个大文件：
+## 测试
 
-最终合并结果为： `待处理文件/待处理文件_合并.docx`
+```bash
+python -m unittest discover -s tests -v
+```
 
-------
-
-## 📌 注意事项
-
-- 本工具不会提取文字，只适用于图像内容转 Word
-- 图片经过压缩与缩放，确保清晰且适配 A4 页面
-- 若 PDF 中存在签章/注释报错，可通过 `pdf2image` 替代 `fitz`（已在脚本中处理）
-
-------
-
-## ❤️ 作者的话
-
-这个工具是为了批量整理扫描资料和图片归档而写的，根据老婆大人的要求进行了多次迭代，并最简化安装步骤，希望能帮到同样有这种需求的小伙伴。如果你有更好的建议，欢迎提交 PR 或 issue！
+> 工具生成的是图像型 Word，不会对扫描内容执行 OCR 或文字提取。

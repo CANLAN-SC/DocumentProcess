@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器中将 PDF 或图片批量转换为可下载的 Word 文档。">
+  <title>纸页 · PDF / 图片转 Word</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="返回转换工具首页">
+      <span class="brand-mark" aria-hidden="true">页</span>
+      <span>
+        <strong>纸页</strong>
+        <small>PDF / 图片转 Word</small>
+      </span>
+    </a>
+    <div class="topbar-note"><span class="status-dot"></span>本机处理 · 文件不上传到外部服务</div>
+  </header>
+
+  <main class="workspace">
+    <section class="control-panel" aria-label="转换设置">
+      <div class="panel-intro">
+        <p class="eyebrow">文档转换工作台</p>
+        <h1>把每一页，原样放进 Word</h1>
+        <p>添加 PDF、JPG 或 PNG，预览版式后一次完成转换。</p>
+      </div>
+
+      <section class="control-section">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <div><h2>添加文件</h2><p>支持拖放，最多 50 个文件</p></div>
+        </div>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <input id="file-input" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+          <span class="upload-icon" aria-hidden="true">＋</span>
+          <strong>拖放文件到这里</strong>
+          <span>或点击选择文件</span>
+        </label>
+        <div class="file-list" id="file-list" aria-live="polite"></div>
+      </section>
+
+      <section class="control-section">
+        <div class="section-heading">
+          <span class="step">02</span>
+          <div><h2>调整版式</h2><p>更改会立即反映在右侧</p></div>
+        </div>
+
+        <div class="setting-block">
+          <div class="setting-title">
+            <label for="image-scale">批量图片大小</label>
+            <output id="image-scale-output" for="image-scale">90%</output>
+          </div>
+          <input id="image-scale" class="range" type="range" min="10" max="100" value="90">
+          <div class="range-labels"><span>小</span><span>适应页面</span></div>
+        </div>
+
+        <fieldset class="margin-fields">
+          <legend>Word 页边距 <span>厘米</span></legend>
+          <label>上<input id="margin-top" type="number" min="0" max="8" step="0.1" value="2.54"></label>
+          <label>下<input id="margin-bottom" type="number" min="0" max="8" step="0.1" value="2.54"></label>
+          <label>左<input id="margin-left" type="number" min="0" max="8" step="0.1" value="2.54"></label>
+          <label>右<input id="margin-right" type="number" min="0" max="8" step="0.1" value="2.54"></label>
+        </fieldset>
+        <button class="text-button" id="reset-layout" type="button">恢复默认版式</button>
+      </section>
+
+      <section class="control-section compact-section">
+        <div class="section-heading">
+          <span class="step">03</span>
+          <div><h2>导出设置</h2><p>选择清晰度与打包方式</p></div>
+        </div>
+        <div class="segmented" role="radiogroup" aria-label="输出质量">
+          <label><input type="radio" name="quality" value="normal" checked><span>高清</span></label>
+          <label><input type="radio" name="quality" value="compress"><span>压缩</span></label>
+        </div>
+        <label class="check-row">
+          <input id="merge-files" type="checkbox">
+          <span><strong>合并为一个 Word</strong><small>选择多个文件时生效</small></span>
+        </label>
+      </section>
+
+      <button class="primary-button" id="convert-button" type="button" disabled>
+        <span class="button-label">开始转换</span>
+        <span class="button-spinner" aria-hidden="true"></span>
+      </button>
+      <div class="result-card" id="result-card" hidden aria-live="polite"></div>
+      <p class="error-message" id="error-message" role="alert" hidden></p>
+    </section>
+
+    <section class="preview-panel" aria-label="Word 实时预览">
+      <div class="preview-toolbar">
+        <div>
+          <p class="eyebrow">实时预览</p>
+          <h2 id="preview-title">Word 页面</h2>
+        </div>
+        <div class="preview-meta" id="preview-meta">等待添加文件</div>
+      </div>
+      <div class="preview-stage" id="preview-stage">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-badge" aria-hidden="true">A4</div>
+          <h3>页面预览会显示在这里</h3>
+          <p>添加文件后，可实时查看图片尺寸和页边距。</p>
+        </div>
+        <div class="loading-state" id="loading-state" hidden>
+          <span class="large-spinner"></span>
+          <p>正在读取文档页面…</p>
+        </div>
+        <div class="pages" id="pages" hidden></div>
+      </div>
+      <footer class="preview-footer">
+        <span><i class="legend-paper"></i>A4 纸张</span>
+        <span>预览前 6 页 · 最终文档包含全部页面</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

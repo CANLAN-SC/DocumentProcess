@@ -3,3 +3,7 @@ poppler/
 build/
 installer.iss
 setup.py
+__pycache__/
+*.py[cod]
+.venv/
+web/data/

@@ -1,5 +1,4 @@
 import os
-import sys
 from docx import Document
 from docxcompose.composer import Composer
 
