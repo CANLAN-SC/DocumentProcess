@@ -57,7 +57,16 @@ function addFiles(fileList) {
     }
   }
   if (rejected.length) showError(`已忽略不支持的文件：${rejected.join("、")}`);
-  if (state.selectedIndex < 0 && state.files.length) state.selectedIndex = 0;
+  // 按文件名字典序（升序、自然排序）重排，保证列表顺序稳定可预期。
+  // 若已有选中文件，按文件标识重新定位，避免排序后选中项错位。
+  const selectedFile = state.selectedIndex >= 0 ? state.files[state.selectedIndex] : null;
+  state.files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }));
+  if (selectedFile) {
+    const located = state.files.findIndex((file) => fileKey(file) === fileKey(selectedFile));
+    state.selectedIndex = located >= 0 ? located : 0;
+  } else if (state.files.length) {
+    state.selectedIndex = 0;
+  }
   renderFileList();
   updateControls();
   loadSelectedPreview();
@@ -221,7 +230,7 @@ function validateSettings() {
   const scale = numericValue(elements.imageScale, NaN);
   const margins = [elements.marginTop, elements.marginBottom, elements.marginLeft, elements.marginRight]
     .map((input) => numericValue(input, NaN));
-  if (!Number.isFinite(scale) || scale < 10 || scale > 100) return "图片大小必须在 10% 到 100% 之间";
+  if (!Number.isFinite(scale) || scale < 10 || scale > 200) return "图片大小必须在 10% 到 200% 之间";
   if (margins.some((value) => !Number.isFinite(value) || value < 0 || value > 8)) return "页边距必须在 0 到 8 厘米之间";
   if (margins[2] + margins[3] >= 20) return "左右页边距之和过大";
   if (margins[0] + margins[1] >= 28.35) return "上下页边距之和过大";

@@ -36,6 +36,25 @@ class LayoutConfigTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             LayoutConfig(margin_left_cm=8.1, margin_right_cm=2).validate()
 
+    def test_image_scale_200_is_accepted(self):
+        LayoutConfig(image_scale_percent=200).validate()
+
+    def test_image_scale_above_200_is_rejected(self):
+        with self.assertRaises(ValueError) as ctx:
+            LayoutConfig(image_scale_percent=201).validate()
+        self.assertIn("200", str(ctx.exception))
+
+    def test_image_size_doubles_at_200_percent(self):
+        base = LayoutConfig(image_scale_percent=100)
+        doubled = LayoutConfig(image_scale_percent=200)
+        # 竖图触发「高度超限按比例回缩」，横图触发「仅宽度约束」两条分支，
+        # 两种情况下 200% 的宽高都应恰好是 100% 的 2 倍。
+        for size in ((1200, 1800), (1800, 1200)):
+            base_w, base_h = base.image_size_cm(*size)
+            double_w, double_h = doubled.image_size_cm(*size)
+            self.assertAlmostEqual(double_w, base_w * 2, places=3)
+            self.assertAlmostEqual(double_h, base_h * 2, places=3)
+
 
 class DocumentOutputTests(unittest.TestCase):
     def test_image_size_and_margins_are_written_to_docx(self):

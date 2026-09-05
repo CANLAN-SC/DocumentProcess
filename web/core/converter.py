@@ -44,8 +44,8 @@ class LayoutConfig:
         )
         if any(value < 0 or value > 8 for value in margins):
             raise ValueError("页边距必须在 0 到 8 厘米之间")
-        if not 10 <= self.image_scale_percent <= 100:
-            raise ValueError("图片大小必须在 10% 到 100% 之间")
+        if not 10 <= self.image_scale_percent <= 200:
+            raise ValueError("图片大小必须在 10% 到 200% 之间")
         if self.available_width_cm <= 1:
             raise ValueError("左右页边距之和过大，页面可用宽度不足")
         if self.available_image_height_cm <= 1:
@@ -194,7 +194,7 @@ class WordConverter:
         return output_path
 
 
-def render_preview(input_path, output_folder, page_limit=6, dpi=110):
+def render_preview(input_path, output_folder, page_limit=6, dpi=150):
     """生成浏览器预览图，返回（页面信息列表，总页数）。"""
     input_path = Path(input_path)
     output_folder = Path(output_folder)

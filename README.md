@@ -8,7 +8,7 @@
 
 - 批量上传 PDF、JPG、JPEG、PNG
 - A4 Word 版式实时预览，可切换文件并查看 PDF 前 6 页
-- 批量调整全部图片大小（页面可用区域的 10%～100%）
+- 批量调整全部图片大小（页面可用区域的 10%～200%）
 - 分别设置 Word 上、下、左、右页边距
 - 高清和压缩两种输出质量
 - 多文件分别导出为 ZIP，或合并为一个 Word 文档
@@ -64,6 +64,27 @@ web/
     └── js/app.js
 tests/test_pdf_converter.py    # 转换和 Web API 测试
 ```
+
+## 打包为独立程序（Windows）
+
+在已安装依赖和 PyInstaller 的 Python 环境中，使用项目根目录下的 `build.spec` 一键生成不依赖 Python 的单文件程序：
+
+```bash
+python -m pip install -r requirements.txt pyinstaller
+python -m PyInstaller --clean --noconfirm build.spec
+```
+
+生成的程序位于 `dist/PdfToWord.exe`。把 `PdfToWord.exe` 单独拷贝给未安装 Python 的同事即可使用：
+
+- 双击运行，程序会在本机 `http://127.0.0.1:8000` 提供服务并自动打开浏览器；
+- 控制台窗口会显示访问地址，直接关闭窗口或按 `Ctrl+C` 即可退出；
+- 命令行参数与源码版一致，例如 `PdfToWord.exe --no-browser` 可关闭自动打开浏览器。
+
+注意事项：
+
+- 单文件程序首次启动时需要把运行文件解压到临时目录，启动会比源码版慢（通常数秒到数十秒），请耐心等待；
+- 程序体积约 90～140MB，属于正常现象（内含 Python 解释器和 PyMuPDF 等运行库）；
+- 个别杀毒软件可能对无签名的 PyInstaller 单文件程序误报，如遇拦截请加入信任列表或改用源码方式运行。
 
 ## 测试
 

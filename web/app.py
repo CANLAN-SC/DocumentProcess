@@ -1,6 +1,8 @@
 import argparse
 import re
 import shutil
+import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -13,8 +15,26 @@ from flask import Flask, jsonify, render_template, request, send_from_directory,
 from web.core.converter import LayoutConfig, SUPPORTED_EXTENSIONS, WordConverter, render_preview
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_DATA_DIR = Path(__file__).resolve().parent / "data"
+def _is_frozen():
+    """判断是否运行在 PyInstaller 打包后的冻结环境中。"""
+    return getattr(sys, "frozen", False)
+
+
+def _resource_root():
+    """返回模板与静态资源所在的根目录。
+
+    冻结打包时资源被解压到临时目录 sys._MEIPASS，否则使用项目根目录。
+    """
+    if _is_frozen():
+        return Path(sys._MEIPASS)
+    return Path(__file__).resolve().parent.parent
+
+
+PROJECT_ROOT = _resource_root()
+if _is_frozen():
+    DEFAULT_DATA_DIR = Path(tempfile.gettempdir()) / "pdf2word" / "data"
+else:
+    DEFAULT_DATA_DIR = Path(__file__).resolve().parent / "data"
 JOB_ID_PATTERN = re.compile(r"^[0-9a-f]{32}$")
 INVALID_FILENAME_CHARS = re.compile(r"[<>:\"/\\|?*\x00-\x1f]")
 MAX_FILES = 50
@@ -22,7 +42,12 @@ JOB_LIFETIME_SECONDS = 24 * 60 * 60
 
 
 def create_app(test_config=None):
-    app = Flask(__name__, template_folder="templates", static_folder="static")
+    resource_root = _resource_root()
+    app = Flask(
+        __name__,
+        template_folder=str(resource_root / "web" / "templates"),
+        static_folder=str(resource_root / "web" / "static"),
+    )
     app.config.update(
         MAX_CONTENT_LENGTH=500 * 1024 * 1024,
         DATA_DIR=str(DEFAULT_DATA_DIR),

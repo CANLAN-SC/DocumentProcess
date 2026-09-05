@@ -121,10 +121,10 @@ button { cursor: pointer; }
 .preview-stage { overflow: auto; position: relative; padding: 34px 24px 50px; }
 .pages { display: grid; justify-content: center; gap: 30px; }
 .word-page { --margin-top: 8.55%; --margin-bottom: 8.55%; --margin-left: 12.1%; --margin-right: 12.1%; --image-scale: 90%; width: min(620px, calc(100vw - 540px)); min-width: 390px; aspect-ratio: 210 / 297; position: relative; background: white; box-shadow: var(--shadow); border: 1px solid #d7d9dc; }
-.word-content { position: absolute; top: var(--margin-top); bottom: var(--margin-bottom); left: var(--margin-left); right: var(--margin-right); overflow: hidden; }
+.word-content { position: absolute; top: var(--margin-top); bottom: var(--margin-bottom); left: var(--margin-left); right: var(--margin-right); overflow: visible; }
 .word-title { height: 5.2%; min-height: 25px; margin: 0; color: #111827; font-size: clamp(11px, 1.25vw, 16px); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .word-image-area { position: absolute; top: 5.2%; bottom: 0; left: 0; right: 0; display: flex; align-items: flex-start; justify-content: center; }
-.word-image-area img { max-width: var(--image-scale); max-height: var(--image-scale); width: auto; height: auto; object-fit: contain; box-shadow: 0 0 0 1px rgba(23,34,55,.06); }
+.word-image-area img { width: var(--image-scale); height: var(--image-scale); object-fit: contain; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(23,34,55,.06); }
 .page-number { position: absolute; bottom: 11px; left: 0; right: 0; text-align: center; color: #a2a8b0; font: 10px Georgia, serif; }
 
 .empty-state, .loading-state { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); text-align: center; }
